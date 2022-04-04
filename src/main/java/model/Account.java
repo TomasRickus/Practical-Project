@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import repository.CustomerType;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -19,8 +20,9 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer accountId;
 
-    private Integer accountNumber;
+    private Integer password;
     private LocalDate singUpDate;
+    private CustomerType customerType;
 
 
     @OneToOne(mappedBy = "account")

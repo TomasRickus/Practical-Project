@@ -29,7 +29,8 @@ public class ProductService {
     }
     public Product findProductByName() {
         System.out.println("Iveskite ieskomos prekes pavadinima:");
-        scanner.next().contains(product.getProductName());
+        scanner.next().equalsIgnoreCase(product.getProductName());
+        System.out.println("Rasta preke: " + product.toString());
         return product;
     }
 }
