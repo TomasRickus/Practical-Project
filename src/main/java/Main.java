@@ -1,50 +1,32 @@
-import model.Account;
-import model.Customer;
-import repository.CustomerType;
+import com.itextpdf.text.DocumentException;
+import model.Product;
+import repository.ProductType;
 import repository.Repository;
-
-import java.time.LocalDate;
 import service.CustomerService;
+import service.ProductService;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws DocumentException, IOException, URISyntaxException {
+
         Repository repository = new Repository();
+//
+//        List<Product> products = repository.findProduct();
+//        products.stream().filter(product -> product.getProductType().equals(ProductType.CLOTHING))
+//                .forEach(Product::getProductName);
 
-
-
-
-//        Customer tomas = Customer.builder()
-//                .firstName("Admin")
-//                .lastName("Admin")
-//                .email("admin@gmail.com")
-//                .customerType(CustomerType.SELLER)
-//                .phone("861234567")
-//                .build();
-//        repository.save(tomas);
 
         CustomerService customerService = new CustomerService();
         customerService.showMenu();
 
-        Customer admin = repository.findById(2);
-        System.out.println("Rasta o gal ne " + admin.getFirstName());
-
-//        Account byPassword = repository.findByIdAcc(2);
-//        System.out.println("Ar ras pgal passworda?? " + byPassword.getCustomer());
-
-//        Account account = Account.builder()
-//                .customer(tomas)
-//                .build();
-
-
-
-//
-//        Account byPassword = repository.findById(1);
-//        System.out.println("rastas klientas " + byPassword.getCustomer());
-
-
-
-
+//        ProductService productService = new ProductService();
+//        productService.showProductByName();
+//        ToPdf pdf = new ToPdf();
+//        pdf.orderToPdf();
 
     }
 }

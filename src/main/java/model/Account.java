@@ -20,12 +20,10 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer accountId;
 
-    private Integer password;
+    private Integer pinCode;
     private LocalDate singUpDate;
     private CustomerType customerType;
 
-
     @OneToOne(mappedBy = "account")
     private Customer customer;
-
 }

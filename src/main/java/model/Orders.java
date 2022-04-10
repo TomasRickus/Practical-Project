@@ -28,19 +28,11 @@ public class Orders {
     @JoinColumn(name = "customerId")
     private Customer customer;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "products_to_orders")
-    private List<Product> products;
-//
-//    @ManyToMany(mappedBy = "orders")
-//    @JoinColumn(name = "customerId")
-//    private Set<Product> products;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "productId")
+    private Product product;
 
-//    @ManyToOne
-//    private List<Customer> customers;
-//
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "customer_customer_id")
-//    private Customer customer;
-
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "products_to_orders")
+//    private List<Product> products;
 }

@@ -4,12 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.criterion.Order;
 import repository.ProductType;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -33,11 +30,19 @@ public class Product {
     @JoinColumn(name = "customerId")
     private Customer customer;
 
-    @ManyToMany(mappedBy = "products")
-    private List<Orders> orders;
+    //    @ManyToMany(mappedBy = "products")
+//    private List<Orders> orders;
+    @OneToOne(mappedBy = "product")
+    private Orders orders;
 
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    @JoinTable(name = "orders_to_products") // sukuriam papildoma lentele suristi ManyToMany
-//    private Set<Orders> orders;//vienoje bibliotekoje gali lankytis daug klientu (owneriu)
-
+    @Override
+    public String toString() {
+        return "Preke: " +
+                "Prekes ID: " + productId +
+                ", Prekes tipas: " + productType +
+                ", Kaina: " + price +
+                ", Spava: " + color + '\'' +
+                ", Dydis: " + size +
+                ", Prekes pavadinimas: '" + productName + '\'' ;
+    }
 }

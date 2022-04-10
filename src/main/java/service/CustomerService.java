@@ -5,9 +5,10 @@ import model.Customer;
 import repository.CustomerType;
 import repository.Repository;
 
-import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.util.Random;
 import java.util.Scanner;
+
 
 public class CustomerService {
 
@@ -22,59 +23,62 @@ public class CustomerService {
         System.out.println("Prasome suvesti savo duomenis! ");
         System.out.println("***************************");
         System.out.println("Iveskite savo varda: ");
-        customer.setFirstName(scanner.next());
+        String name = scanner.next();
+        customer.setFirstName(name);
         System.out.println("Iveskite savo pavarde: ");
-        customer.setLastName(scanner.next());
-        System.out.println("Iveskite savo el. pasta: ");
-        String email = scanner.nextLine();
+        String lastName = scanner.next();
+        customer.setLastName(lastName);
+        System.out.println("Iveskite teisinga savo el. pasta: ");
+        String email = scanner.next();
         customer.setEmail(email);
         while (customer.isNotEmailAddress(email)) {
-            email = scanner.nextLine();
+            System.out.println("Neteisingai ivestas el. pastas, prasome ivesti teisingai el. pasta");
+            email = scanner.next();
         }
         System.out.println("Iveskite savo tel numeri: ");
-        String phone = scanner.nextLine();
+        String phone = scanner.next();
         customer.setPhone(phone);
         while (customer.isNotPhoneNumber(phone)) {
             System.out.println("Neteisingai ivestas telefono numeris, prasome ivesti teisinga telefono numeri");
-            phone = scanner.nextLine();
+            phone = scanner.next();
         }
         customer.setAccount(Account.builder()
                 .customerType(choiceCustomerType())
                 .singUpDate(LocalDate.now())
-                .password(pinGenerator(10))
+                .pinCode(pinGenerator(4))
                 .build());
         System.out.println();
         System.out.println("Aciu Jusu registracija sekmingai ivykdyta!");
-        repository.save(customer);
-        System.out.println("Jusu slaptazodis yra " + customer.getAccount().getPassword());
-
+        repository.saveCustomer(customer);
+        System.out.println("Jusu ID yra " + customer.getCustomerID());
+        System.out.println("Jusu pin kodas yra " + customer.getAccount().getPinCode());
         return customer;
     }
 
     public int pinGenerator(int passwordLength) {
-        SecureRandom random = new SecureRandom();
-        int[] myArray2 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
-        int randomNum = 0;
+        Random random = new Random();
+        String[] myArray2 = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"};
+        StringBuilder randomNum = new StringBuilder();
         for (int i = 0; i < passwordLength; i++) {
-            randomNum = random.nextInt(myArray2.length);
-        }
-        return randomNum;
-    }
 
+            randomNum.append(myArray2[random.nextInt(9)]);
+        }
+        return Integer.parseInt(randomNum.toString());
+    }
 
     public CustomerType choiceCustomerType() {
         System.out.println("Pasirinkite kliento tipa: 1 Pirkejas / 2 Pardavejas");
-        int userInput = scanner.nextInt();
-        if (userInput == 1) {
+        String userInput = scanner.next();
+        if (userInput.equalsIgnoreCase("1")) {
             customer.setCustomerType(CustomerType.BUYER);
             System.out.println("Sveikiname, pasirinkote buti pirkejas!");
-        }
-        if (userInput == 2) {
+        } else if (userInput.equalsIgnoreCase("2")) {
             customer.setCustomerType(CustomerType.SELLER);
             System.out.println("Sveikiname pasirinkote buti pardavejas!");
-        } else
-            System.out.println("Neteisingas pasirinkimas bandykite dar karta!");
-
+        } else {
+            System.out.println("Neteisingas pasirinkimas bandykite pasirinkti dar karta  ...");
+            choiceCustomerType();
+        }
         return customer.getCustomerType();
     }
 
@@ -94,9 +98,9 @@ public class CustomerService {
         } while (selection != 'E');
     }
 
-
     public void login(Customer customer) {
-        boolean isLogin = enterPassword(customer);
+
+        boolean isLogin = customerLogin(customer);
 
         if (isLogin) {
             char selection = 'X';
@@ -106,25 +110,38 @@ public class CustomerService {
                 selection = printingService.printLoginMenu(scanner);
                 switch (selection) {
                     case '1' -> productService.insertProduct();
-                    case '2' -> productService.findProductByName();
+                    case '2' -> productService.showProductsByType();
+                    case '3' -> productService.createOrder();
+                    case '4' -> productService.showOrder();
                     case 'E' -> System.out.println("Aciu viso gero!");
                 }
             } while (selection != 'E');
         }
     }
 
-    public boolean enterPassword(Customer customerId) {
+    public boolean customerLogin(Customer customer) {
         System.out.println("Iveskite savo Id: ");
-        Scanner scanner = new Scanner(System.in);
-        Customer byId = repository.findById(scanner.nextInt());
+        String customerId = scanner.next();
+        Customer byId = repository.findCustomerById(Integer.valueOf(String.valueOf(customerId)));
+        if (byId == null) {
+            System.out.println("Nerastas toks ID bandykite dar karta...");
+            customerLogin(customer);
+        }
+        assert byId != null;
         String firstName = byId.getFirstName();
-        System.out.println("Sveiki prisijunge " + firstName);
+        System.out.println("Sveiki atvyke " + firstName);
         System.out.println("Iveskite savo pin koda: ");
-        Scanner scanner1 = new Scanner(System.in);
-        int pinCode = scanner1.nextInt();
-        return pinCode == byId.getAccount().getPassword();
+
+        String pinCode = scanner.next();
+        Integer foundAccountByPin = byId.getAccount().getPinCode();
+
+        if (!pinCode.equalsIgnoreCase(String.valueOf(foundAccountByPin))) {
+            System.out.println("Neteisingas pin kodas, bandykite dar karta prisijungti...");
+            customerLogin(customer);
+        }
+        return pinCode.equalsIgnoreCase(String.valueOf(foundAccountByPin));
     }
-
-
 }
+
+
 
