@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -22,26 +20,14 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderId;
 
-    private Double totalAmount;
+    private String totalAmount;
     private LocalDate orderDate;
 
     @ManyToOne
     @JoinColumn(name = "customerId")
     private Customer customer;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "products_to_orders")
-    private List<Product> products;
-//
-//    @ManyToMany(mappedBy = "orders")
-//    @JoinColumn(name = "customerId")
-//    private Set<Product> products;
-
-//    @ManyToOne
-//    private List<Customer> customers;
-//
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "customer_customer_id")
-//    private Customer customer;
-
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "productId")
+    private Product product;
 }
