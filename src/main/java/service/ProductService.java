@@ -1,6 +1,5 @@
 package service;
 
-import model.Customer;
 import model.Orders;
 import model.Product;
 import repository.ProductType;
@@ -16,11 +15,6 @@ public class ProductService {
     Scanner scanner = new Scanner(System.in);
     Repository repository = new Repository();
     Orders orders = new Orders();
-    Customer customer = new Customer();
-
-    private static String test(Orders orders1) {
-        return orders1.getProduct().getProductName();
-    }
 
     public Product insertProduct() {
         System.out.println();
@@ -29,13 +23,13 @@ public class ProductService {
         String productName = scanner.next();
         product.setProductName(productName);
         System.out.println("Nurodykite kaina");
-        Double price = scanner.nextDouble();
+        String price = scanner.next();
         product.setPrice(price);
         System.out.println("Nurodykite spalva");
         String color = scanner.next();
         product.setColor(color);
         System.out.println("Nurodykite dydi");
-        int size = scanner.nextInt();
+        String size = scanner.next();
         product.setSize(size);
         System.out.println("Nurodykite prekes tipa");
         product.setProductType(choiceProductType());
@@ -82,29 +76,25 @@ public class ProductService {
         List<Product> products = repository.findProduct();
 
         switch (productTypeSelection) {
-            case "1" -> {
-                products.stream().filter(product1 -> ProductType.CLOTHING.equals(product1.getProductType()))
+            case "1" -> { products.stream().filter(product1 -> ProductType.CLOTHING.equals(product1.getProductType()))
                         .forEach(product -> System.out.println("Rasta preke: " + product.getProductName() + " Prekes tipas: "
                                 + product.getProductType() +
                                 " Prekes ID: " + product.getProductId() + " Kaina: " + product.getPrice() +
                                 " Spalva: " + product.getColor() + " Dydis: " + product.getSize()));
             }
-            case "2" -> {
-                products.stream().filter(product1 -> ProductType.SHOES.equals(product1.getProductType()))
+            case "2" -> { products.stream().filter(product1 -> ProductType.SHOES.equals(product1.getProductType()))
                         .forEach(product -> System.out.println("Rasta preke: " + product.getProductName() + " Prekes tipas: "
                                 + product.getProductType() +
                                 " Prekes ID: " + product.getProductId() + " Kaina: " + product.getPrice() +
                                 " Spalva: " + product.getColor() + " Dydis: " + product.getSize()));
             }
-            case "3" -> {
-                products.stream().filter(product1 -> ProductType.ACCESSORIES.equals(product1.getProductType()))
+            case "3" -> { products.stream().filter(product1 -> ProductType.ACCESSORIES.equals(product1.getProductType()))
                         .forEach(product -> System.out.println("Rasta preke: " + product.getProductName() + " Prekes tipas: "
                                 + product.getProductType() +
                                 " Prekes ID: " + product.getProductId() + " Kaina: " + product.getPrice() +
                                 " Spalva: " + product.getColor() + " Dydis: " + product.getSize()));
             }
-            case "4" -> {
-                System.out.println("Nepasirinktas prekes tipas!");
+            case "4" -> { System.out.println("Nepasirinktas prekes tipas!");
                 showAllProducts();
             }
             case "5" -> showProductByName();
@@ -138,9 +128,9 @@ public class ProductService {
         newOrder.setTotalAmount(repository.findProductById(userInputProductID).getPrice());
 
         repository.saveOrder(newOrder);
-        System.out.println("Jusu krepselio ID yra " + orders.getOrderId());
-        System.out.println("Jusu doumenys: " + orders.getCustomer().getFirstName() + " " + orders.getCustomer().getLastName()
-                + " suma " + orders.getTotalAmount());
+        System.out.println("Jusu krepselio ID yra " + newOrder.getOrderId());
+        System.out.println("Jusu doumenys: " + newOrder.getCustomer().getFirstName() + " " + newOrder.getCustomer().getLastName()
+                + " suma " + newOrder.getTotalAmount());
         return orders;
     }
 

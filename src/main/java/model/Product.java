@@ -21,17 +21,15 @@ public class Product {
     private Integer productId;
 
     private ProductType productType;
-    private Double price;
+    private String price;
     private String color;
-    private Integer size;
+    private String size;
     private String productName;
 
     @ManyToOne
     @JoinColumn(name = "customerId")
     private Customer customer;
 
-    //    @ManyToMany(mappedBy = "products")
-//    private List<Orders> orders;
     @OneToOne(mappedBy = "product")
     private Orders orders;
 
@@ -41,7 +39,7 @@ public class Product {
                 "Prekes ID: " + productId +
                 ", Prekes tipas: " + productType +
                 ", Kaina: " + price +
-                ", Spava: " + color + '\'' +
+                ", Spava: '" + color + '\'' +
                 ", Dydis: " + size +
                 ", Prekes pavadinimas: '" + productName + '\'' ;
     }

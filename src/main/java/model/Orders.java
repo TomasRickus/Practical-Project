@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Data
@@ -21,7 +20,7 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderId;
 
-    private Double totalAmount;
+    private String totalAmount;
     private LocalDate orderDate;
 
     @ManyToOne
@@ -31,8 +30,4 @@ public class Orders {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "productId")
     private Product product;
-
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "products_to_orders")
-//    private List<Product> products;
 }
