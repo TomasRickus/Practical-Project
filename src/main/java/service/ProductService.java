@@ -4,7 +4,9 @@ import model.Orders;
 import model.Product;
 import repository.ProductType;
 import repository.Repository;
+import validator.JsonReader;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
@@ -15,6 +17,7 @@ public class ProductService {
     Scanner scanner = new Scanner(System.in);
     Repository repository = new Repository();
     Orders orders = new Orders();
+    PrintingService printingService = new PrintingService();
 
     public Product insertProduct() {
         System.out.println();
@@ -36,9 +39,17 @@ public class ProductService {
         System.out.println("Nurodykite savo ID");
         int customerId = scanner.nextInt();
         product.setCustomer(repository.findCustomerById(customerId));
-        repository.saveCustomer(product);
+        product.setAvailable(true);
+        repository.saveProduct(product);
         System.out.println("Jus idejote " + product);
 
+        return product;
+    }
+    public Product insertProductFromFile() throws IOException {
+        JsonReader jsonReader = new JsonReader();
+        Product productListFromFile = (Product) jsonReader.getProductListFromFile("src/main/java/service/MOCK_DATA.json");
+
+        repository.saveProduct(productListFromFile);
         return product;
     }
 
@@ -69,37 +80,37 @@ public class ProductService {
                         " Spalva: " + product.getColor() + " Dydis: " + product.getSize()));
     }
 
-    public void showProductsByType() {
-        System.out.println("Pasirinkite ieskomos prekes tipa \n 1 Drabuziai \n 2 Batai \n 3 Aksesuarai \n 4 Rodyti visas prekes " +
-                "\n Arba spauskite 5 ir iveskite ieskomos prekes pavadinima");
+    public void searchProducts() {
+        printingService.printFindProduct();
         String productTypeSelection = scanner.next();
         List<Product> products = repository.findProduct();
 
         switch (productTypeSelection) {
-            case "1" -> { products.stream().filter(product1 -> ProductType.CLOTHING.equals(product1.getProductType()))
+            case "1" -> {
+                products.stream().filter(product1 -> ProductType.CLOTHING.equals(product1.getProductType()))
                         .forEach(product -> System.out.println("Rasta preke: " + product.getProductName() + " Prekes tipas: "
                                 + product.getProductType() +
                                 " Prekes ID: " + product.getProductId() + " Kaina: " + product.getPrice() +
                                 " Spalva: " + product.getColor() + " Dydis: " + product.getSize()));
             }
-            case "2" -> { products.stream().filter(product1 -> ProductType.SHOES.equals(product1.getProductType()))
+            case "2" -> {
+                products.stream().filter(product1 -> ProductType.SHOES.equals(product1.getProductType()))
                         .forEach(product -> System.out.println("Rasta preke: " + product.getProductName() + " Prekes tipas: "
                                 + product.getProductType() +
                                 " Prekes ID: " + product.getProductId() + " Kaina: " + product.getPrice() +
                                 " Spalva: " + product.getColor() + " Dydis: " + product.getSize()));
             }
-            case "3" -> { products.stream().filter(product1 -> ProductType.ACCESSORIES.equals(product1.getProductType()))
+            case "3" -> {
+                products.stream().filter(product1 -> ProductType.ACCESSORIES.equals(product1.getProductType()))
                         .forEach(product -> System.out.println("Rasta preke: " + product.getProductName() + " Prekes tipas: "
                                 + product.getProductType() +
                                 " Prekes ID: " + product.getProductId() + " Kaina: " + product.getPrice() +
                                 " Spalva: " + product.getColor() + " Dydis: " + product.getSize()));
             }
-            case "4" -> { System.out.println("Nepasirinktas prekes tipas!");
-                showAllProducts();
-            }
+            case "4" -> showAllProducts();
+
             case "5" -> showProductByName();
         }
-
     }
 
     public void showAllProducts() {
@@ -109,6 +120,7 @@ public class ProductService {
                         + product.getProductType() +
                         " Prekes ID: " + product.getProductId() + " Kaina: " + product.getPrice() +
                         " Spalva: " + product.getColor() + " Dydis: " + product.getSize()));
+
     }
 
     public Orders createOrder() {
@@ -141,6 +153,28 @@ public class ProductService {
         ordersById.stream().filter(orders1 -> orders1.getOrderId().equals(orderId))
                 .forEach(orders1 -> System.out.println("Jusu preke: " + orders1.getProduct().getProductName() +
                         "\nKaina: " + orders1.getProduct().getPrice()));
+    }
+
+    public void deleteProduct() {
+        System.out.println("Susiraskite preke kuria norite istrinti: ");
+        searchProducts();
+        System.out.println("Iveskite id prekes kuria norite istrinti: ");
+        int idToDelete = scanner.nextInt();
+        Product productById = repository.findProductById(idToDelete);
+        repository.delete(productById);
+        System.out.println("Preke " + productById.getProductName() + " istrinta");
+
+    }
+
+    public void updateProduct() {
+        System.out.println("Susiraskite preke kuria norite koreguoti: ");
+        searchProducts();
+        System.out.println("Iveskite id prekes kuria norite koreguoti: ");
+        int idToDelete = scanner.nextInt();
+        Product productById = repository.findProductById(idToDelete);
+        productById.setAvailable(false);
+        repository.update(productById);
+        product.isProductAvailable(productById);
     }
 }
 

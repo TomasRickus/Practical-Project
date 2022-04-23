@@ -17,6 +17,7 @@ public class CustomerService {
     ProductService productService = new ProductService();
     Repository repository = new Repository();
     PrintingService printingService = new PrintingService();
+    SystemAdminService adminService = new SystemAdminService();
 
     public Customer registrationForm() {
         System.out.println();
@@ -70,16 +71,16 @@ public class CustomerService {
         System.out.println("Pasirinkite kliento tipa: 1 Pirkejas / 2 Pardavejas");
         String userInput = scanner.next();
         if (userInput.equalsIgnoreCase("1")) {
-            customer.setCustomerType(CustomerType.BUYER);
+            customer.getAccount().setCustomerType(CustomerType.BUYER);
             System.out.println("Sveikiname, pasirinkote buti pirkejas!");
         } else if (userInput.equalsIgnoreCase("2")) {
-            customer.setCustomerType(CustomerType.SELLER);
+            customer.getAccount().setCustomerType(CustomerType.SELLER);
             System.out.println("Sveikiname pasirinkote buti pardavejas!");
         } else {
             System.out.println("Neteisingas pasirinkimas bandykite pasirinkti dar karta  ...");
             choiceCustomerType();
         }
-        return customer.getCustomerType();
+        return customer.getAccount().getCustomerType();
     }
 
     public void showMenu() {
@@ -91,35 +92,48 @@ public class CustomerService {
             Customer customer = new Customer();
             switch (selection) {
                 case '1' -> registrationForm();
-                case '2' -> login(customer);
+                case '2' -> customerLogin(customer);
+                case '3' -> adminService.loginSystemAdmin(customer);
                 case 'E' -> System.out.println("Aciu viso gero!");
             }
 
         } while (selection != 'E');
     }
 
-    public void login(Customer customer) {
+    public void loginBuyer(Customer customer) {
 
-        boolean isLogin = customerLogin(customer);
-
-        if (isLogin) {
             char selection = 'X';
             Scanner scanner = new Scanner(System.in);
 
             do {
-                selection = printingService.printLoginMenu(scanner);
+                selection = printingService.printBuyerMenu(scanner);
                 switch (selection) {
-                    case '1' -> productService.insertProduct();
-                    case '2' -> productService.showProductsByType();
-                    case '3' -> productService.createOrder();
-                    case '4' -> productService.showOrder();
+                    case '1' -> productService.searchProducts();
+                    case '2' -> productService.createOrder();
+                    case '3' -> productService.showOrder();
                     case 'E' -> System.out.println("Aciu viso gero!");
                 }
             } while (selection != 'E');
         }
+    public void loginSeller(Customer customer) {
+
+        char selection = 'X';
+        Scanner scanner = new Scanner(System.in);
+
+        do {
+            selection = printingService.printSellerMenu(scanner);
+            switch (selection) {
+                case '1' -> productService.insertProduct();
+                case '2' -> productService.searchProducts();
+                case '3' -> productService.createOrder();
+                case '4' -> productService.showOrder();
+                case 'E' -> System.out.println("Aciu viso gero!");
+            }
+        } while (selection != 'E');
     }
 
-    public boolean customerLogin(Customer customer) {
+
+    public void customerLogin(Customer customer) {
         System.out.println("Iveskite savo Id: ");
         String customerId = scanner.next();
         Customer byId = repository.findCustomerById(Integer.valueOf(String.valueOf(customerId)));
@@ -128,19 +142,42 @@ public class CustomerService {
             customerLogin(customer);
         }
         assert byId != null;
-        String firstName = byId.getFirstName();
-        System.out.println("Sveiki atvyke " + firstName);
-        System.out.println("Iveskite savo pin koda: ");
+        boolean ifBuyer = byId.getAccount().getCustomerType().equals(CustomerType.BUYER);
+        boolean ifSeller = byId.getAccount().getCustomerType().equals(CustomerType.SELLER);
+        if (ifBuyer) {
+            String firstName = byId.getFirstName();
+            System.out.println("Sveiki atvyke " + firstName);
+            System.out.println("Iveskite savo pin koda: ");
 
-        String pinCode = scanner.next();
-        Integer foundAccountByPin = byId.getAccount().getPinCode();
+            String pinCode = scanner.next();
+            Integer foundAccountByPin = byId.getAccount().getPinCode();
 
-        if (!pinCode.equalsIgnoreCase(String.valueOf(foundAccountByPin))) {
-            System.out.println("Neteisingas pin kodas, bandykite dar karta prisijungti...");
-            customerLogin(customer);
+            if (!pinCode.equalsIgnoreCase(String.valueOf(foundAccountByPin))) {
+                System.out.println("Neteisingas pin kodas, bandykite dar karta prisijungti...");
+                customerLogin(customer);
+            }
+            loginBuyer(customer);
+
+        } else if (ifSeller) {
+            String firstName = byId.getFirstName();
+            System.out.println("Sveiki atvyke " + firstName);
+            System.out.println("Iveskite savo pin koda: ");
+
+            String pinCode = scanner.next();
+            Integer foundAccountByPin = byId.getAccount().getPinCode();
+
+            if (!pinCode.equalsIgnoreCase(String.valueOf(foundAccountByPin))) {
+                System.out.println("Neteisingas pin kodas, bandykite dar karta prisijungti...");
+                customerLogin(customer);
+            }
+            loginSeller(customer);
+
+
+        } else {
+            System.out.println("Nepavyko prisijungti...");
         }
-        return pinCode.equalsIgnoreCase(String.valueOf(foundAccountByPin));
     }
+
 }
 
 

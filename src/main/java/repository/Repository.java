@@ -19,7 +19,12 @@ public class Repository {
         transaction.commit();
     }
 
-    public void saveCustomer(Product product) {
+    public void saveProduct(Product product) {
+        Transaction transaction = session.beginTransaction();
+        session.persist(product);
+        transaction.commit();
+    }
+    public void saveProductList (List<Product> product) {
         Transaction transaction = session.beginTransaction();
         session.persist(product);
         transaction.commit();
@@ -34,6 +39,11 @@ public class Repository {
     public void delete(Object object) {
         Transaction transaction = session.beginTransaction();
         session.delete(object);
+        transaction.commit();
+    }
+    public void update(Object object){
+        Transaction transaction = session.beginTransaction();
+        session.update(object);
         transaction.commit();
     }
 

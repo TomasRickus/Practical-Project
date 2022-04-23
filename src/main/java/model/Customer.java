@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import repository.CustomerType;
 
 import javax.persistence.*;
 import java.util.List;
@@ -26,12 +25,11 @@ public class Customer {
     private String lastName;
     private String email;
     private String phone;
-    private CustomerType customerType;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST)
     private List<Product> products;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST)
     private List<Orders> orders;
 
     @OneToOne(cascade = CascadeType.ALL)

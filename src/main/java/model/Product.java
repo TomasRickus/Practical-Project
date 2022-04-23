@@ -25,6 +25,7 @@ public class Product {
     private String color;
     private String size;
     private String productName;
+    boolean isAvailable;
 
     @ManyToOne
     @JoinColumn(name = "customerId")
@@ -32,6 +33,12 @@ public class Product {
 
     @OneToOne(mappedBy = "product")
     private Orders orders;
+
+    public Product isProductAvailable(Product product) {
+        if (!product.isAvailable)
+            System.out.println("Preke parduota/nepasiekiama ");
+        return product;
+    }
 
     @Override
     public String toString() {
@@ -41,6 +48,6 @@ public class Product {
                 ", Kaina: " + price +
                 ", Spava: '" + color + '\'' +
                 ", Dydis: " + size +
-                ", Prekes pavadinimas: '" + productName + '\'' ;
+                ", Prekes pavadinimas: '" + productName + '\'';
     }
 }
